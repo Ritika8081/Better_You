@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Astrology Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .card-shadow { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+        .animate-fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="min-h-screen gradient-bg">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl md:text-6xl font-bold text-white mb-4">✨ Advanced Astrology Calculator</h1>
+            <p class="text-xl text-white/80">Discover your Mulank, Bhagyank & Complete Astrological Profile</p>
+        </div>
+
+        <!-- Input Form -->
+        <div class="max-w-md mx-auto mb-8">
+            <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 card-shadow">
+                <h2 class="text-2xl font-semibold text-white mb-6 text-center">Enter Your Details</h2>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-white/80 text-sm font-medium mb-2">Full Name</label>
+                        <input type="text" id="fullName" class="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent" placeholder="Enter your full name">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-white/80 text-sm font-medium mb-2">Date of Birth</label>
+                        <input type="date" id="birthDate" class="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-white/80 text-sm font-medium mb-2">Time of Birth</label>
+                        <input type="time" id="birthTime" class="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-white/80 text-sm font-medium mb-2">Place of Birth</label>
+                        <input type="text" id="birthPlace" class="w-full px-4 py-3 bg-white/20 border border-white/30 rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/50 focus:border-transparent" placeholder="City, Country">
+                    </div>
+                </div>
+                
+                <button onclick="calculateAstrology()" class="w-full mt-6 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold py-3 px-6 rounded-lg hover:from-purple-600 hover:to-pink-600 transform hover:scale-105 transition-all duration-200 shadow-lg">
+                    Calculate My Astrology
+                </button>
+            </div>
+        </div>
+
+        <!-- Results -->
+        <div id="results" class="hidden animate-fade-in">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
+                <!-- Main Numbers -->
+                <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 card-shadow">
+                    <h3 class="text-2xl font-bold text-white mb-6 text-center">🔢 Your Core Numbers</h3>
+                    <div class="space-y-4">
+                        <div class="bg-white/10 rounded-lg p-4">
+                            <h4 class="text-lg font-semibold text-white mb-2">Mulank (Life Path Number)</h4>
+                            <div class="text-3xl font-bold text-yellow-300" id="mulank"></div>
+                            <p class="text-white/80 text-sm mt-2" id="mulankMeaning"></p>
+                        </div>
+                        <div class="bg-white/10 rounded-lg p-4">
+                            <h4 class="text-lg font-semibold text-white mb-2">Bhagyank (Destiny Number)</h4>
+                            <div class="text-3xl font-bold text-green-300" id="bhagyank"></div>
+                            <p class="text-white/80 text-sm mt-2" id="bhagyankMeaning"></p>
+                        </div>
+                        <div class="bg-white/10 rounded-lg p-4">
+                            <h4 class="text-lg font-semibold text-white mb-2">Name Number</h4>
+                            <div class="text-3xl font-bold text-blue-300" id="nameNumber"></div>
+                            <p class="text-white/80 text-sm mt-2" id="nameNumberMeaning"></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Zodiac & Personality -->
+                <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 card-shadow">
+                    <h3 class="text-2xl font-bold text-white mb-6 text-center">♈ Zodiac Profile</h3>
+                    <div class="space-y-4">
+                        <div class="bg-white/10 rounded-lg p-4">
+                            <h4 class="text-lg font-semibold text-white mb-2">Sun Sign</h4>
+                            <div class="text-2xl font-bold text-orange-300" id="sunSign"></div>
+                            <p class="text-white/80 text-sm mt-2" id="sunSignTraits"></p>
+                        </div>
+                        <div class="bg-white/10 rounded-lg p-4">
+                            <h4 class="text-lg font-semibold text-white mb-2">Element</h4>
+                            <div class="text-xl font-bold text-cyan-300" id="element"></div>
+                        </div>
+                        <div class="bg-white/10 rounded-lg p-4">
+                            <h4 class="text-lg font-semibold text-white mb-2">Ruling Planet</h4>
+                            <div class="text-xl font-bold text-purple-300" id="rulingPlanet"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Colors & Gemstones -->
+                <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 card-shadow">
+                    <h3 class="text-2xl font-bold text-white mb-6 text-center">🎨 Colors & Gemstones</h3>
+                    <div class="space-y-4">
+                        <div class="bg-white/10 rounded-lg p-4">
+                            <h4 class="text-lg font-semibold text-white mb-3">Lucky Colors</h4>
+                            <div id="luckyColors" class="flex flex-wrap gap-2"></div>
+                        </div>
+                        <div class="bg-white/10 rounded-lg p-4">
+                            <h4 class="text-lg font-semibold text-white mb-3">Gemstones</h4>
+                            <div id="gemstones" class="space-y-2"></div>
+                        </div>
+                        <div class="bg-white/10 rounded-lg p-4">
+                            <h4 class="text-lg font-semibold text-white mb-2">Avoid Colors</h4>
+                            <div id="avoidColors" class="flex flex-wrap gap-2"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lucky Numbers & Days -->
+                <div class="bg-white/10 backdrop-blur-lg rounded-2xl p-6 card-shadow">
+                    <h3 class="text-2xl font-bold text-white mb-6 text-center">🍀 Lucky Elements</h3>
+                    <div class="space-y-4">
+                        <div class="bg-white/10 rounded-lg p-4">
+                            <h4 class="text-lg font-semibold text-white mb-3">Lucky Numbers</h4>
+                            <div id="luckyNumbers" class="flex flex-wrap gap-2"></div>
+                        </div>
+                        <div class="bg-white/10 rounded-lg p-4">
+                            <h4 class="text-lg font-semibold text-white mb-3">Lucky Days</h4>
+                            <div id="luckyDays" class="flex flex-wrap gap-2"></div>
+                        </div>
+                        <div class="bg-white/10 rounded-lg p-4">
+                            <h4 class="text-lg font-semibold text-white mb-2">Avoid Numbers</h4>
+                            <div id="avoidNumbers" class="flex flex-wrap gap-2"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Analysis -->
+                <div class="lg:col-span-2 bg-white/10 backdrop-blur-lg rounded-2xl p-6 card-shadow">
+                    <h3 class="text-2xl font-bold text-white mb-6 text-center">📊 Detailed Analysis</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white/10 rounded-lg p-4">
+                            <h4 class="text-lg font-semibold text-white mb-3">Personality Traits</h4>
+                            <div id="personalityTraits" class="text-white/80 text-sm space-y-2"></div>
+                        </div>
+                        <div class="bg-white/10 rounded-lg p-4">
+                            <h4 class="text-lg font-semibold text-white mb-3">Career Guidance</h4>
+                            <div id="careerGuidance" class="text-white/80 text-sm space-y-2"></div>
+                        </div>
+                        <div class="bg-white/10 rounded-lg p-4">
+                            <h4 class="text-lg font-semibold text-white mb-3">Compatibility</h4>
+                            <div id="compatibility" class="text-white/80 text-sm space-y-2"></div>
+                        </div>
+                        <div class="bg-white/10 rounded-lg p-4">
+                            <h4 class="text-lg font-semibold text-white mb-3">Health & Wellness</h4>
+                            <div id="healthWellness" class="text-white/80 text-sm space-y-2"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Numerology and Astrology Data
+        const numerologyData = {
+            1: {
+                meaning: "Natural leader, independent, pioneering spirit",
+                personality: ["Leadership qualities", "Independent nature", "Creative and innovative", "Strong willpower", "Pioneering spirit"],
+                career: ["Business leadership", "Entrepreneurship", "Politics", "Military", "Innovation"],
+                colors: ["Red", "Orange", "Yellow"],
+                avoidColors: ["Black", "Dark Blue"],
+                gemstones: ["Ruby", "Garnet", "Red Coral"],
+                luckyNumbers: [1, 10, 19, 28],
+                avoidNumbers: [2, 7, 8],
+                luckyDays: ["Sunday", "Monday"],
+                compatibility: ["Number 1, 5, 9"],
+                health: ["Heart health", "Blood circulation", "Avoid stress"]
+            },
+            2: {
+                meaning: "Cooperative, diplomatic, sensitive and caring",
+                personality: ["Diplomatic nature", "Cooperative spirit", "Sensitive and caring", "Good mediator", "Team player"],
+                career: ["Diplomacy", "Counseling", "Teaching", "Arts", "Social work"],
+                colors: ["White", "Cream", "Light Blue", "Green"],
+                avoidColors: ["Red", "Dark colors"],
+                gemstones: ["Pearl", "Moonstone", "Jade"],
+                luckyNumbers: [2, 11, 20, 29],
+                avoidNumbers: [1, 4, 8],
+                luckyDays: ["Monday", "Friday"],
+                compatibility: ["Number 2, 6, 9"],
+                health: ["Digestive system", "Emotional balance", "Avoid depression"]
+            },
+            3: {
+                meaning: "Creative, expressive, optimistic and inspiring",
+                personality: ["Creative expression", "Optimistic outlook", "Great communicator", "Artistic talents", "Social butterfly"],
+                career: ["Arts and entertainment", "Writing", "Public speaking", "Teaching", "Media"],
+                colors: ["Yellow", "Orange", "Purple"],
+                avoidColors: ["Black", "Dark Green"],
+                gemstones: ["Yellow Sapphire", "Citrine", "Topaz"],
+                luckyNumbers: [3, 12, 21, 30],
+                avoidNumbers: [4, 8, 9],
+                luckyDays: ["Thursday", "Friday"],
+                compatibility: ["Number 3, 6, 9"],
+                health: ["Throat and communication", "Avoid overindulgence", "Mental health"]
+            },
+            4: {
+                meaning: "Practical, reliable, hard-working and disciplined",
+                personality: ["Practical approach", "Reliable nature", "Hard-working", "Disciplined", "Systematic"],
+                career: ["Engineering", "Architecture", "Finance", "Government", "Real estate"],
+                colors: ["Blue", "Grey", "Brown"],
+                avoidColors: ["Red", "Pink"],
+                gemstones: ["Blue Sapphire", "Lapis Lazuli", "Sodalite"],
+                luckyNumbers: [4, 13, 22, 31],
+                avoidNumbers: [1, 5, 9],
+                luckyDays: ["Saturday", "Sunday"],
+                compatibility: ["Number 2, 4, 8"],
+                health: ["Bone health", "Avoid rigidity", "Joint care"]
+            },
+            5: {
+                meaning: "Adventurous, freedom-loving, dynamic and versatile",
+                personality: ["Adventurous spirit", "Freedom-loving", "Dynamic personality", "Versatile", "Quick thinking"],
+                career: ["Travel industry", "Sales", "Marketing", "Journalism", "Sports"],
+                colors: ["Green", "Turquoise", "Silver"],
+                avoidColors: ["Red", "Orange"],
+                gemstones: ["Emerald", "Aquamarine", "Turquoise"],
+                luckyNumbers: [5, 14, 23, 32],
+                avoidNumbers: [2, 4, 9],
+                luckyDays: ["Wednesday", "Friday"],
+                compatibility: ["Number 1, 5, 9"],
+                health: ["Nervous system", "Avoid excess stimulation", "Mental balance"]
+            },
+            6: {
+                meaning: "Nurturing, responsible, compassionate and family-oriented",
+                personality: ["Nurturing nature", "Responsible", "Compassionate", "Family-oriented", "Helpful"],
+                career: ["Healthcare", "Education", "Hospitality", "Social services", "Interior design"],
+                colors: ["Pink", "Blue", "White"],
+                avoidColors: ["Red", "Black"],
+                gemstones: ["Diamond", "Opal", "Rose Quartz"],
+                luckyNumbers: [6, 15, 24, 33],
+                avoidNumbers: [1, 5, 8],
+                luckyDays: ["Friday", "Saturday"],
+                compatibility: ["Number 2, 3, 6, 9"],
+                health: ["Heart health", "Family stress", "Emotional balance"]
+            },
+            7: {
+                meaning: "Analytical, spiritual, mysterious and intuitive",
+                personality: ["Analytical mind", "Spiritual nature", "Mysterious", "Intuitive", "Research-oriented"],
+                career: ["Research", "Science", "Psychology", "Spirituality", "Analysis"],
+                colors: ["Purple", "Violet", "Sea Green"],
+                avoidColors: ["Red", "Yellow"],
+                gemstones: ["Amethyst", "Cat's Eye", "Fluorite"],
+                luckyNumbers: [7, 16, 25, 34],
+                avoidNumbers: [1, 2, 9],
+                luckyDays: ["Monday", "Sunday"],
+                compatibility: ["Number 2, 4, 7"],
+                health: ["Mental health", "Avoid isolation", "Spiritual balance"]
+            },
+            8: {
+                meaning: "Ambitious, material success, powerful and authoritative",
+                personality: ["Ambitious nature", "Material focused", "Powerful", "Authoritative", "Business-minded"],
+                career: ["Business", "Finance", "Real estate", "Law", "Politics"],
+                colors: ["Black", "Dark Blue", "Brown"],
+                avoidColors: ["Pink", "Light colors"],
+                gemstones: ["Black Onyx", "Hematite", "Garnet"],
+                luckyNumbers: [8, 17, 26, 35],
+                avoidNumbers: [1, 2, 9],
+                luckyDays: ["Saturday", "Sunday"],
+                compatibility: ["Number 2, 4, 8"],
+                health: ["Bone health", "Avoid overwork", "Stress management"]
+            },
+            9: {
+                meaning: "Humanitarian, generous, universal love and wisdom",
+                personality: ["Humanitarian", "Generous", "Universal love", "Wise", "Compassionate"],
+                career: ["Social work", "Healing", "Teaching", "Arts", "Philanthropy"],
+                colors: ["Red", "Pink", "Coral"],
+                avoidColors: ["Black", "Dark Blue"],
+                gemstones: ["Red Coral", "Carnelian", "Bloodstone"],
+                luckyNumbers: [9, 18, 27, 36],
+                avoidNumbers: [2, 4, 8],
+                luckyDays: ["Tuesday", "Thursday"],
+                compatibility: ["Number 1, 3, 6, 9"],
+                health: ["Overall vitality", "Avoid burnout", "Emotional health"]
+            }
+        };
+
+        const zodiacData = {
+            'Aries': {
+                element: 'Fire',
+                rulingPlanet: 'Mars',
+                traits: 'Bold, energetic, competitive, natural leader'
+            },
+            'Taurus': {
+                element: 'Earth',
+                rulingPlanet: 'Venus',
+                traits: 'Reliable, patient, practical, devoted'
+            },
+            'Gemini': {
+                element: 'Air',
+                rulingPlanet: 'Mercury',
+                traits: 'Curious, adaptable, expressive, clever'
+            },
+            'Cancer': {
+                element: 'Water',
+                rulingPlanet: 'Moon',
+                traits: 'Intuitive, emotional, nurturing, protective'
+            },
+            'Leo': {
+                element: 'Fire',
+                rulingPlanet: 'Sun',
+                traits: 'Confident, generous, dramatic, creative'
+            },
+            'Virgo': {
+                element: 'Earth',
+                rulingPlanet: 'Mercury',
+                traits: 'Analytical, practical, reliable, perfectionist'
+            },
+            'Libra': {
+                element: 'Air',
+                rulingPlanet: 'Venus',
+                traits: 'Diplomatic, charming, balanced, social'
+            },
+            'Scorpio': {
+                element: 'Water',
+                rulingPlanet: 'Pluto',
+                traits: 'Intense, passionate, mysterious, transformative'
+            },
+            'Sagittarius': {
+                element: 'Fire',
+                rulingPlanet: 'Jupiter',
+                traits: 'Adventurous, optimistic, philosophical, freedom-loving'
+            },
+            'Capricorn': {
+                element: 'Earth',
+                rulingPlanet: 'Saturn',
+                traits: 'Ambitious, disciplined, practical, responsible'
+            },
+            'Aquarius': {
+                element: 'Air',
+                rulingPlanet: 'Uranus',
+                traits: 'Independent, innovative, humanitarian, eccentric'
+            },
+            'Pisces': {
+                element: 'Water',
+                rulingPlanet: 'Neptune',
+                traits: 'Intuitive, compassionate, artistic, dreamy'
+            }
+        };
+
+        function calculateSingleDigit(num) {
+            while (num > 9 && num !== 11 && num !== 22 && num !== 33) {
+                num = num.toString().split('').map(Number).reduce((a, b) => a + b, 0);
+            }
+            return num;
+        }
+
+        function calculateMulank(dateStr) {
+            const date = new Date(dateStr);
+            const day = date.getDate();
+            return calculateSingleDigit(day);
+        }
+
+        function calculateBhagyank(dateStr) {
+            const date = new Date(dateStr);
+            const day = date.getDate();
+            const month = date.getMonth() + 1;
+            const year = date.getFullYear();
+            
+            const total = day + month + year;
+            return calculateSingleDigit(total);
+        }
+
+        function calculateNameNumber(name) {
+            const letterValues = {
+                'A': 1, 'B': 2, 'C': 3, 'D': 4, 'E': 5, 'F': 6, 'G': 7, 'H': 8, 'I': 9,
+                'J': 1, 'K': 2, 'L': 3, 'M': 4, 'N': 5, 'O': 6, 'P': 7, 'Q': 8, 'R': 9,
+                'S': 1, 'T': 2, 'U': 3, 'V': 4, 'W': 5, 'X': 6, 'Y': 7, 'Z': 8
+            };
+            
+            const cleanName = name.replace(/[^A-Za-z]/g, '').toUpperCase();
+            const total = cleanName.split('').reduce((sum, letter) => sum + (letterValues[letter] || 0), 0);
+            return calculateSingleDigit(total);
+        }
+
+        function getZodiacSign(dateStr) {
+            const date = new Date(dateStr);
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            
+            if ((month == 3 && day >= 21) || (month == 4 && day <= 19)) return 'Aries';
+            if ((month == 4 && day >= 20) || (month == 5 && day <= 20)) return 'Taurus';
+            if ((month == 5 && day >= 21) || (month == 6 && day <= 20)) return 'Gemini';
+            if ((month == 6 && day >= 21) || (month == 7 && day <= 22)) return 'Cancer';
+            if ((month == 7 && day >= 23) || (month == 8 && day <= 22)) return 'Leo';
+            if ((month == 8 && day >= 23) || (month == 9 && day <= 22)) return 'Virgo';
+            if ((month == 9 && day >= 23) || (month == 10 && day <= 22)) return 'Libra';
+            if ((month == 10 && day >= 23) || (month == 11 && day <= 21)) return 'Scorpio';
+            if ((month == 11 && day >= 22) || (month == 12 && day <= 21)) return 'Sagittarius';
+            if ((month == 12 && day >= 22) || (month == 1 && day <= 19)) return 'Capricorn';
+            if ((month == 1 && day >= 20) || (month == 2 && day <= 18)) return 'Aquarius';
+            if ((month == 2 && day >= 19) || (month == 3 && day <= 20)) return 'Pisces';
+        }
+
+        function createColorBadge(color) {
+            const colorMap = {
+                'Red': 'bg-red-500',
+                'Orange': 'bg-orange-500',
+                'Yellow': 'bg-yellow-500',
+                'Green': 'bg-green-500',
+                'Blue': 'bg-blue-500',
+                'Purple': 'bg-purple-500',
+                'Pink': 'bg-pink-500',
+                'White': 'bg-white text-black',
+                'Black': 'bg-black',
+                'Brown': 'bg-yellow-800',
+                'Grey': 'bg-gray-500',
+                'Cream': 'bg-yellow-100 text-black',
+                'Light Blue': 'bg-blue-300 text-black',
+                'Turquoise': 'bg-teal-500',
+                'Silver': 'bg-gray-300 text-black',
+                'Violet': 'bg-violet-500',
+                'Sea Green': 'bg-emerald-600',
+                'Dark Blue': 'bg-blue-800',
+                'Coral': 'bg-orange-400',
+                'Dark Green': 'bg-green-800'
+            };
+            
+            return `<span class="px-3 py-1 rounded-full text-sm font-medium ${colorMap[color] || 'bg-gray-500'} text-white">${color}</span>`;
+        }
+
+        function createNumberBadge(number) {
+            return `<span class="px-3 py-1 rounded-full text-sm font-medium bg-indigo-500 text-white">${number}</span>`;
+        }
+
+        function createDayBadge(day) {
+            return `<span class="px-3 py-1 rounded-full text-sm font-medium bg-emerald-500 text-white">${day}</span>`;
+        }
+
+        function calculateAstrology() {
+            const name = document.getElementById('fullName').value;
+            const birthDate = document.getElementById('birthDate').value;
+            const birthTime = document.getElementById('birthTime').value;
+            const birthPlace = document.getElementById('birthPlace').value;
+
+            if (!name || !birthDate) {
+                alert('Please fill in at least your name and birth date.');
+                return;
+            }
+
+            // Calculate core numbers
+            const mulank = calculateMulank(birthDate);
+            const bhagyank = calculateBhagyank(birthDate);
+            const nameNumber = calculateNameNumber(name);
+            const zodiacSign = getZodiacSign(birthDate);
+
+            // Get data
+            const mulankData = numerologyData[mulank];
+            const bhagyankData = numerologyData[bhagyank];
+            const nameData = numerologyData[nameNumber];
+            const zodiacInfo = zodiacData[zodiacSign];
+
+            // Display results
+            document.getElementById('mulank').textContent = mulank;
+            document.getElementById('mulankMeaning').textContent = mulankData.meaning;
+            
+            document.getElementById('bhagyank').textContent = bhagyank;
+            document.getElementById('bhagyankMeaning').textContent = bhagyankData.meaning;
+            
+            document.getElementById('nameNumber').textContent = nameNumber;
+            document.getElementById('nameNumberMeaning').textContent = nameData.meaning;
+
+            document.getElementById('sunSign').textContent = zodiacSign;
+            document.getElementById('sunSignTraits').textContent = zodiacInfo.traits;
+            document.getElementById('element').textContent = zodiacInfo.element;
+            document.getElementById('rulingPlanet').textContent = zodiacInfo.rulingPlanet;
+
+            // Colors
+            const allColors = [...new Set([...mulankData.colors, ...bhagyankData.colors, ...nameData.colors])];
+            document.getElementById('luckyColors').innerHTML = allColors.map(createColorBadge).join('');
+            
+            const allAvoidColors = [...new Set([...mulankData.avoidColors, ...bhagyankData.avoidColors, ...nameData.avoidColors])];
+            document.getElementById('avoidColors').innerHTML = allAvoidColors.map(createColorBadge).join('');
+
+            // Gemstones
+            const allGemstones = [...new Set([...mulankData.gemstones, ...bhagyankData.gemstones, ...nameData.gemstones])];
+            document.getElementById('gemstones').innerHTML = allGemstones.map(gem => `<div class="text-white/90 font-medium">${gem}</div>`).join('');
+
+            // Numbers
+            const allLuckyNumbers = [...new Set([...mulankData.luckyNumbers, ...bhagyankData.luckyNumbers, ...nameData.luckyNumbers])];
+            document.getElementById('luckyNumbers').innerHTML = allLuckyNumbers.map(createNumberBadge).join('');
+            
+            const allAvoidNumbers = [...new Set([...mulankData.avoidNumbers, ...bhagyankData.avoidNumbers, ...nameData.avoidNumbers])];
+            document.getElementById('avoidNumbers').innerHTML = allAvoidNumbers.map(createNumberBadge).join('');
+
+            // Days
+            const allLuckyDays = [...new Set([...mulankData.luckyDays, ...bhagyankData.luckyDays, ...nameData.luckyDays])];
+            document.getElementById('luckyDays').innerHTML = allLuckyDays.map(createDayBadge).join('');
+
+            // Detailed analysis
+            const allPersonality = [...new Set([...mulankData.personality, ...bhagyankData.personality, ...nameData.personality])];
+            document.getElementById('personalityTraits').innerHTML = allPersonality.map(trait => `<div>• ${trait}</div>`).join('');
+
+            const allCareers = [...new Set([...mulankData.career, ...bhagyankData.career, ...nameData.career])];
+            document.getElementById('careerGuidance').innerHTML = allCareers.map(career => `<div>• ${career}</div>`).join('');
+
+            const allCompatibility = [...new Set([...mulankData.compatibility, ...bhagyankData.compatibility, ...nameData.compatibility])];
+            document.getElementById('compatibility').innerHTML = allCompatibility.map(comp => `<div>• Compatible with ${comp}</div>`).join('');
+
+            const allHealth = [...new Set([...mulankData.health, ...bhagyankData.health, ...nameData.health])];
+            document.getElementById('healthWellness').innerHTML = allHealth.map(health => `<div>• ${health}</div>`).join('');
+
+            // Show results
+            document.getElementById('results').classList.remove('hidden');
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Add some interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add floating animation to the header
+            const header = document.querySelector('h1');
+            setInterval(() => {
+                header.style.transform = 'translateY(' + Math.sin(Date.now() / 1000) * 5 + 'px)';
+            }, 16);
+
+            // Add hover effects to input fields
+            const inputs = document.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.style.transform = 'scale(1.02)';
+                    this.style.transition = 'transform 0.2s ease';
+                });
+                
+                input.addEventListener('blur', function() {
+                    this.style.transform = 'scale(1)';
+                });
+            });
+        });
+
+        // Add some mystical background effects
+        function createStars() {
+            const container = document.body;
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.style.position = 'fixed';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = '2px';
+                star.style.height = '2px';
+                star.style.backgroundColor = 'white';
+                star.style.borderRadius = '50%';
+                star.style.opacity = Math.random();
+                star.style.animation = `twinkle ${2 + Math.random() * 3}s infinite`;
+                star.style.pointerEvents = 'none';
+                star.style.zIndex = '-1';
+                container.appendChild(star);
+            }
+        }
+
+        // Add CSS for twinkling stars
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes twinkle {
+                0%, 100% { opacity: 0; }
+                50% { opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize stars
+        createStars();
+    </script>
+</body>
+</html>
